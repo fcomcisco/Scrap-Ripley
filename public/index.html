@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iPhones precios Ripley</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>iPhones precios Ripley</h1>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <script>
+        fetch('iphones.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data loaded:', data); // Mensaje de depuración
+
+                const names = data.map(item => item.name);
+                const priceNormal = data.map(item => item.priceNormal ? parseFloat(item.priceNormal.replace(/[^0-9.-]+/g,"")) : 0);
+                const priceInternet = data.map(item => item.priceInternet ? parseFloat(item.priceInternet.replace(/[^0-9.-]+/g,"")) : 0);
+                const priceCard = data.map(item => item.priceCard ? parseFloat(item.priceCard.replace(/[^0-9.-]+/g,"")) : 0);
+
+                console.log('Names:', names); // Mensaje de depuración
+                console.log('Price Normal:', priceNormal); // Mensaje de depuración
+                console.log('Price Internet:', priceInternet); // Mensaje de depuración
+                console.log('Price Card:', priceCard); // Mensaje de depuración
+
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: names,
+                        datasets: [
+                            {
+                                label: 'Precio Normal',
+                                data: priceNormal,
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Precio Internet',
+                                data: priceInternet,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Precio Tarjeta Ripley',
+                                data: priceCard,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error loading the data:', error));
+    </script>
+</body>
+</html>
